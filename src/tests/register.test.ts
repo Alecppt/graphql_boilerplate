@@ -1,33 +1,31 @@
-function sum(a: number, b: number) {
-  return a + b;
-}
+import { request } from 'graphql-request';
+import { getConnectionManager } from 'typeorm';
+import { createTypeormConnection } from '../util/createTypeormConnection';
+import { User } from '../entity/User';
 
-test('adds 1 + 2 to equal 3', () => {
-  expect(sum(1, 2)).toBe(3);
+beforeAll(async () => {
+  await createTypeormConnection();
 });
 
-// import { request } from 'graphql-request';
-// import { createConnection } from 'typeorm';
+afterAll(async () => {
+  await getConnectionManager().get().close();
+});
 
-// // import { host } from './constants';
-// import { User } from '../entity/User';
+const email = 'alec@test.com';
+const password = 'jalksdf';
 
-// const email = 'tom@bob.com';
-// const password = 'jalksdf';
+const mutation = `
+mutation {
+  register(email: "${email}", password: "${password}")
+}
+`;
 
-// const mutation = `
-// mutation {
-//   register(email: "${email}", password: "${password}")
-// }
-// `;
-
-// test('Register user', async () => {
-//   const response = await request('http://localhost:4000', mutation);
-//   expect(response).toEqual({ register: true });
-//   await createConnection();
-//   const users = await User.find({ where: { email } });
-//   expect(users).toHaveLength(1);
-//   const user = users[0];
-//   expect(user.email).toEqual(email);
-//   expect(user.password).not.toEqual(password);
-// });
+test('Register user', async () => {
+  const response = await request('http://localhost:4000', mutation);
+  expect(response).toEqual({ register: true });
+  const users = await User.find({ where: { email } });
+  expect(users).toHaveLength(1);
+  const user = users[0];
+  expect(user.email).toEqual(email);
+  expect(user.password).not.toEqual(password);
+});

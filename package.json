@@ -23,6 +23,7 @@
     "graphql-yoga": "^1.18.3",
     "pg": "^8.0.0",
     "reflect-metadata": "^0.1.13",
+    "start-server-and-test": "^1.10.11",
     "typeorm": "0.2.24",
     "uuid": "^7.0.2"
   },
@@ -30,6 +31,7 @@
     "start": "NODE_ENV=development nodemon --exec  ts-node --files src/index.ts",
     "gen-schema-types": "gql2ts src/schema.graphql -o src/types/schema.d.ts",
     "test-server": "NODE_ENV=test ts-node --files src/index.ts",
-    "test": "NODE_ENV=test jest --colors"
+    "test": "NODE_ENV=test jest --colors --detectOpenHandles",
+    "ci": "start-server-and-test test-server http://localhost:4000 test"
   }
 }
