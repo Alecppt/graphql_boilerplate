@@ -6,7 +6,6 @@ import { User } from '../entity/User';
 beforeAll(async () => {
   await createTypeormConnection();
 });
-
 afterAll(async () => {
   await getConnectionManager().get().close();
 });
