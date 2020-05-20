@@ -11,10 +11,22 @@ export const resolvers: IResolvers = {
       _,
       { email, password }: GQL.IRegisterOnMutationArguments
     ) => {
+      const isUser = await User.findOne({
+        where: { email },
+        select: ['id'],
+      });
+      if (isUser) {
+        return [
+          {
+            path: 'email',
+            message: 'the email is already existed',
+          },
+        ];
+      }
       const hashPassword = await bcrypt.hash(password, 10);
       const user = await User.create({ email, password: hashPassword });
       await user.save();
-      return true;
+      return null;
     },
   },
 };
