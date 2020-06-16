@@ -2,56 +2,36 @@ import 'reflect-metadata';
 import { ApolloServer } from 'apollo-server-express';
 // import http = require('http');
 import express = require('express');
-import { importSchema } from 'graphql-import';
-import { mergeSchemas, makeExecutableSchema } from 'graphql-tools';
-import { GraphQLSchema } from 'graphql';
+import { redis } from './redis';
+// import { mergeSchemas, makeExecutableSchema } from 'graphql-tools';
+// import { GraphQLSchema } from 'graphql';
 import { createTypeormConnection } from './createTypeormConnection';
-import * as path from 'path';
-import * as fs from 'fs';
-import * as Redis from 'ioredis';
-import { User } from '../entity/User';
+// import * as path from 'path';
+// import * as fs from 'fs';
+import { confirmEmail } from '../routes/confirmEmail';
+import { getSchema } from './getSchema';
 
 export const startServer = async () => {
   const app = express();
-  const schemas: GraphQLSchema[] = [];
-  const folders = fs.readdirSync(path.join(__dirname, '../modules'));
-  folders.forEach((folder) => {
-    const { resolvers } = require(`../modules/${folder}/resolvers`);
-    const typeDefs = importSchema(
-      path.join(__dirname, `../modules/${folder}/schema.graphql`)
-    );
-    schemas.push(makeExecutableSchema({ resolvers, typeDefs }));
-  });
-
-  const redis = new Redis();
+  const port = process.env.NODE_ENV === 'test' ? 8000 : 4000;
 
   const appollo = new ApolloServer({
-    schema: mergeSchemas({ schemas }),
+    schema: getSchema(),
     context: ({ req }) => ({
       redis,
       url: req.protocol + '://' + req.get('host'),
     }),
     playground: true,
   });
-  await createTypeormConnection();
-
-  app.get('/confirm/:id', async (req, res) => {
-    const { id } = req.params;
-    const userId = await redis.get(id);
-    if (userId) {
-      await User.update({ id: userId }, { isConfirmed: true });
-      res.send('ok');
-    } else {
-      res.send('user not found');
-    }
-  });
-  // const port = process.env.NODE_ENV === 'test' ? 0 : 4000;
 
   appollo.applyMiddleware({ app });
+  app.get('/confirm/:id', confirmEmail);
 
-  app.listen({ port: 4000 }, () =>
+  await createTypeormConnection();
+  app.listen({ port: port }, () =>
     console.log(
-      `🚀 Server ready at http://localhost:4000${appollo.graphqlPath}`
+      `🚀 GrahpQl ready at http://localhost:${port}${appollo.graphqlPath}`,
+      `🚀 REST ready at http://localhost:${port}`
     )
   );
   return app;

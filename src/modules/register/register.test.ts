@@ -22,7 +22,7 @@ beforeAll(async () => {
 describe('Register user', () => {
   it('check using duplicate email to register', async () => {
     const response = await request(
-      process.env.TEST_HOST as string,
+      process.env.TEST_GRAPHQL_HOST as string,
       mutation(email, password)
     );
     expect(response).toEqual({ register: null });
@@ -33,7 +33,7 @@ describe('Register user', () => {
     expect(user.password).not.toEqual(password);
 
     const response1 = await request(
-      process.env.TEST_HOST as string,
+      process.env.TEST_GRAPHQL_HOST as string,
       mutation(email, password)
     );
     expect(response1.register).toHaveLength(1);
@@ -42,7 +42,7 @@ describe('Register user', () => {
 
   it('check registering email format', async () => {
     const response_with_wrong_email = await request(
-      process.env.TEST_HOST as string,
+      process.env.TEST_GRAPHQL_HOST as string,
       mutation('2434@gamil', password)
     );
     expect(response_with_wrong_email.register).toHaveLength(1);
@@ -51,7 +51,7 @@ describe('Register user', () => {
 
   it('check registerinng password format', async () => {
     const response_with_short_password = await request(
-      process.env.TEST_HOST as string,
+      process.env.TEST_GRAPHQL_HOST as string,
       mutation(email, '123')
     );
     expect(response_with_short_password.register).toHaveLength(1);
