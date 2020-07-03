@@ -4,20 +4,42 @@ import express from 'express';
 import { redis } from './redis';
 import { createTypeormConnection } from './createTypeormConnection';
 import { confirmEmail } from '../routes/confirmEmail';
-// import { getSchema } from './getSchema';
 import { generateSchema } from './generateSchema';
+import session from 'express-session';
+import cors from 'cors';
+import connectRedis from 'connect-redis';
+import dotenv from 'dotenv';
+
 export const startServer = async () => {
   const app = express();
   const port = process.env.NODE_ENV === 'test' ? 8000 : 4000;
-
+  dotenv.config({ path: 'src/.env' });
   const appollo = new ApolloServer({
     schema: await generateSchema(),
-    context: ({ req }: any) => ({
-      redis,
-      url: req.protocol + '://' + req.get('host'),
-    }),
+    context: ({ req }: any) => ({ req }),
     playground: true,
   });
+  //session
+  app.use(
+    cors({
+      credentials: true,
+      origin: 'http://localhost:4000',
+    })
+  );
+  const RedisStore = connectRedis(session);
+  app.use(
+    session({
+      store: new RedisStore({ client: redis as any }),
+      name: 'sid',
+      secret: process.env.SESSION_SECRET,
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 1000 * 60 * 60 * 5,
+      },
+    } as any)
+  );
 
   appollo.applyMiddleware({ app });
   app.get('/confirm/:id', confirmEmail);
