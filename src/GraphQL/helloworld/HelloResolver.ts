@@ -1,8 +1,11 @@
-import { Resolver, Query } from 'type-graphql';
+import { Resolver, Query, UseMiddleware } from 'type-graphql';
+import { isAuth } from '../middleware/isAuth';
 
 @Resolver()
 export class HelloResolver {
-  @Query(() => String) async hello() {
+  @UseMiddleware(isAuth)
+  @Query(() => String)
+  async hello() {
     return 'hello';
   }
 }
