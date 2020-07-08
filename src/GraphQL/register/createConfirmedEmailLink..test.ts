@@ -1,4 +1,4 @@
-import { creatConfirmEmailLink } from './createConfirmedEmailLink';
+import { createConfirmEmailLink } from './createConfirmedEmailLink';
 import { createTypeormConnection } from '../../util/createTypeormConnection';
 import { User } from '../../entity/User';
 import { redis } from '../../util/redis';
@@ -17,7 +17,7 @@ beforeAll(async () => {
 
 describe('test Email Link for confirming account creation', () => {
   it('confirming account using email link', async () => {
-    const url = await creatConfirmEmailLink(
+    const url = await createConfirmEmailLink(
       process.env.TEST_GRAPHQL_HOST as string,
       userId,
       redis

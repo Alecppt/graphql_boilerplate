@@ -3,7 +3,7 @@ import { ApolloServer } from 'apollo-server-express';
 import express from 'express';
 import { redis } from './redis';
 import { createTypeormConnection } from './createTypeormConnection';
-import { confirmEmail } from '../routes/confirmEmail';
+// import { confirmEmail } from '../routes/confirmEmail';
 import { generateSchema } from './generateSchema';
 import session from 'express-session';
 import cors from 'cors';
@@ -42,7 +42,8 @@ export const startServer = async () => {
   );
 
   appollo.applyMiddleware({ app });
-  app.get('/confirm/:id', confirmEmail);
+  //change to GrapgQL resovler
+  // app.get('/user/confirm/:id', confirmEmail);
 
   await createTypeormConnection();
   app.listen({ port: port }, () =>
@@ -51,5 +52,6 @@ export const startServer = async () => {
       `🚀 REST ready at http://localhost:${port}`
     )
   );
+
   return app;
 };

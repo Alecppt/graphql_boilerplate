@@ -16,10 +16,16 @@ export class LoginResolver {
     if (!user) {
       return null;
     }
+
     const isPasssWordValid = await bcrypt.compare(password, user.password);
     if (!isPasssWordValid) {
       return null;
     }
+
+    //comment out for now, for testing
+    // if (!user.isConfirmed) {
+    //   return null;
+    // }
     ctx.req.session!.userId = user.id;
     return user;
   }

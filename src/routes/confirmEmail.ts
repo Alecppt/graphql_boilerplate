@@ -5,7 +5,7 @@ import { redis } from '../util/redis';
 export const confirmEmail = async (req: Request, res: Response) => {
   const { id } = req.params;
   const userId = await redis.get(id);
-  //   console.log(id);
+  console.log(id);
   if (userId) {
     await User.update({ id: userId }, { isConfirmed: true });
     redis.del(id);
