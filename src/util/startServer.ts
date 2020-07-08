@@ -16,7 +16,7 @@ export const startServer = async () => {
   dotenv.config({ path: 'src/.env' });
   const appollo = new ApolloServer({
     schema: await generateSchema(),
-    context: ({ req }: any) => ({ req }),
+    context: ({ req, res }: any) => ({ req, res }),
     playground: true,
   });
   //session
@@ -35,6 +35,7 @@ export const startServer = async () => {
       resave: false,
       saveUninitialized: false,
       cookie: {
+        httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         maxAge: 1000 * 60 * 60 * 5,
       },
