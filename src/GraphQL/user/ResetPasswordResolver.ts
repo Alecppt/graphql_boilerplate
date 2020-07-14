@@ -21,6 +21,7 @@ export class ResetPasswordResolver {
       user.password = await bcrypt.hash(password, 10);
       user.save();
       redis.del(redis_token);
+      ctx.req.session!.userId = user.id;
       return user;
     }
     return null;
