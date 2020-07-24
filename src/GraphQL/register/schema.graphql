@@ -1,9 +1,0 @@
-# import Error from "../../share.graphql"
-
-type Query {
-  dummyFixForRootQuery: String!
-}
-
-type Mutation {
-  register(email: String!, password: String!): [Error!]
-}
