@@ -18,5 +18,5 @@ export const createEmailLink = async (
   //url includes '/graphql' which needs to be removed
   // const graphqlpath_str = '/graphql';
   // const new_url = url.slice(0, url.length - graphqlpath_str.length);
-  return `http://localhost:4000/${route_path}${token}`;
+  return `http://localhost:${process.env.PORT}/${route_path}${token}`;
 };

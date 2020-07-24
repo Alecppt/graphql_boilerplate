@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { ApolloServer } from 'apollo-server-express';
+import { ApolloServer, ApolloError } from 'apollo-server-express';
 import express from 'express';
 import { redis } from './redis';
 import { createTypeormConnection } from './createTypeormConnection';
@@ -9,14 +9,27 @@ import session from 'express-session';
 import cors from 'cors';
 import connectRedis from 'connect-redis';
 import dotenv from 'dotenv';
+import { GraphQLError } from 'graphql';
+import { v4 as uuid } from 'uuid';
 
 export const startServer = async () => {
   const app = express();
   const port = process.env.NODE_ENV === 'test' ? 8000 : 4000;
+  process.env.PORT = port.toString();
   dotenv.config({ path: 'src/.env' });
+
   const appollo = new ApolloServer({
     schema: await generateSchema(),
     context: ({ req, res }: any) => ({ req, res }),
+    formatError: (err: GraphQLError) => {
+      if (err.originalError instanceof ApolloError) {
+        return err;
+      }
+      const errId = uuid();
+      console.log('errId: ', errId);
+      console.log(err);
+      return new GraphQLError(`Internal Error: ${errId}`);
+    },
     playground: true,
   });
   //session
