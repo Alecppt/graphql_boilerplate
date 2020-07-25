@@ -4,6 +4,7 @@ import { User } from '../../entity/User';
 import { ContextInterface } from '../../types/ContextInterface';
 import { redis } from '../../util/redis';
 import { registerAccountPrefix } from '../utils/prefixConstant';
+
 @Resolver()
 export class ConfirmAccountResolver {
   @Mutation(() => Boolean) async confirmAccount(

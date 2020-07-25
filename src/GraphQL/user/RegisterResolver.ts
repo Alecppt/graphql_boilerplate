@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { Resolver, Mutation, Arg } from 'type-graphql';
 import { User } from '../../entity/User';
 import * as bcrypt from 'bcrypt';
-import { RegisterInput } from './RegisterInputValidator';
+import { RegisterInput } from './inputValidation/RegisterInputValidator';
 import { SendEmail } from '../utils/sendEmail';
 import { createEmailLink } from '../utils/createEmailLink';
 import { registerAccountPrefix } from '../utils/prefixConstant';
@@ -13,7 +13,7 @@ export class RegisterResolver {
   @Mutation(() => User) async register(
     @Arg('data') { email, password }: RegisterInput
   ): Promise<User> {
-    const duplicate_email = User.findOne({ where: { email } });
+    const duplicate_email = await User.findOne({ where: { email } });
     if (duplicate_email) {
       throw new ApolloError('email is already registered!');
     }
