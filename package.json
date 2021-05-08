@@ -45,7 +45,7 @@
     "reflect-metadata": "^0.1.13",
     "start-server-and-test": "^1.10.11",
     "type-graphql": "^1.0.0-rc.2",
-    "typeorm": "0.2.24",
+    "typeorm": "0.2.25",
     "uuid": "^8.2.0"
   },
   "peerDependencies": {
