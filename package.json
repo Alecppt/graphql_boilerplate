@@ -37,7 +37,7 @@
     "express-session": "^1.17.1",
     "graphql": "^15.0.0",
     "graphql-request": "^2.1.0-next.1",
-    "graphql-tools": "6.0.1",
+    "graphql-tools": "6.2.6",
     "ioredis": "^4.17.3",
     "node-fetch": "^2.6.0",
     "nodemailer": "^6.4.10",
